@@ -11,6 +11,13 @@ export interface Ingredient {
   category: 'produce' | 'grains' | 'dairy' | 'spices' | 'protein' | 'other';
 }
 
+export interface Nutrition {
+  calories: number;
+  protein: string;
+  carbs: string;
+  fat: string;
+}
+
 export interface Recipe {
   id: string;
   name: string;
@@ -20,6 +27,7 @@ export interface Recipe {
   prepTime: string;
   desc: string;
   ingredients: Ingredient[];
+  nutrition?: Nutrition;
 }
 
 export interface Substitution {

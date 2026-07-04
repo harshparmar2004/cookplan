@@ -27,6 +27,27 @@ export function MealPlanView({ data }: { data: MealPlanResult }) {
               </div>
               <h3 className="text-xl font-medium text-primary mb-2 leading-tight">{meal.name}</h3>
               <p className="text-secondary text-sm leading-relaxed flex-1">{meal.desc}</p>
+              
+              {meal.nutrition && (
+                <div className="mt-6 pt-4 border-t border-border-light grid grid-cols-4 gap-2 text-center">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-wider text-secondary">Cals</span>
+                    <span className="text-sm font-medium text-primary mt-1">{meal.nutrition.calories}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-wider text-secondary">Protein</span>
+                    <span className="text-sm font-medium text-primary mt-1">{meal.nutrition.protein}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-wider text-secondary">Carbs</span>
+                    <span className="text-sm font-medium text-primary mt-1">{meal.nutrition.carbs}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-wider text-secondary">Fat</span>
+                    <span className="text-sm font-medium text-primary mt-1">{meal.nutrition.fat}</span>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

@@ -1,26 +1,21 @@
-import express from 'express';
-import path from 'path';
-import { createServer as createViteServer } from 'vite';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Groq from 'groq-sdk';
 
-const PORT = 3000;
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
-async function startServer() {
-  const app = express();
-  app.use(express.json());
+  try {
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) {
+      return res.status(500).json({ error: 'GROQ_API_KEY environment variable is missing.' });
+    }
 
-  // API Route
-  app.post('/api/generate-plan', async (req, res) => {
-    try {
-      const groqKey = process.env.GROQ_API_KEY;
-      if (!groqKey) {
-        return res.status(500).json({ error: 'GROQ_API_KEY environment variable is missing.' });
-      }
+    const groq = new Groq({ apiKey: groqKey });
+    const { people, diet, budget, disliked, busyness, profileType, age, college, gender } = req.body;
 
-      const groq = new Groq({ apiKey: groqKey });
-      const { people, diet, budget, disliked, busyness, profileType, age, college, gender } = req.body;
-
-      const systemPrompt = `You are a culinary AI assistant that generates meal plans and grocery lists.
+    const systemPrompt = `You are a culinary AI assistant that generates meal plans and grocery lists.
 You must return a valid JSON object matching this schema exactly:
 
 {
@@ -63,7 +58,7 @@ You must return a valid JSON object matching this schema exactly:
 
 Use Indian Rupees (₹) as the currency context for estimating budget costs. Calculate protein amount properly based on typical nutritional data.`;
 
-      const userPrompt = `Please generate a meal plan for:
+    const userPrompt = `Please generate a meal plan for:
 - Profile: ${profileType} (Age: ${age}, Gender: ${gender}${profileType === 'student' ? `, College: ${college}` : `, Workplace: ${college}`})
 - People: ${people}
 - Diet: ${diet}
@@ -73,43 +68,21 @@ Use Indian Rupees (₹) as the currency context for estimating budget costs. Cal
 
 Make sure the grocery list quantities match the number of people. Only return valid JSON, no markdown formatting or extra text.`;
 
-      const completion = await groq.chat.completions.create({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        model: 'llama-3.3-70b-versatile',
-        temperature: 0.2,
-        response_format: { type: 'json_object' }
-      });
-
-      const jsonStr = completion.choices[0]?.message?.content || '{}';
-      res.json(JSON.parse(jsonStr));
-
-    } catch (error: any) {
-      console.error("Groq API Error:", error);
-      res.status(500).json({ error: error.message || 'Failed to generate plan.' });
-    }
-  });
-
-  // Vite Middleware
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
+    const completion = await groq.chat.completions.create({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.2,
+      response_format: { type: 'json_object' }
     });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+
+    const jsonStr = completion.choices[0]?.message?.content || '{}';
+    res.json(JSON.parse(jsonStr));
+
+  } catch (error: any) {
+    console.error("Groq API Error:", error);
+    res.status(500).json({ error: error.message || 'Failed to generate plan.' });
   }
-
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
 }
-
-startServer();
