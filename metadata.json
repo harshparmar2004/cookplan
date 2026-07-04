@@ -1,0 +1,6 @@
+{
+  "name": "CookPlan",
+  "description": "An AI cooking to-do list generator that creates a personalized daily meal plan based on your day.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
