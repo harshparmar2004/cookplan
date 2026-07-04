@@ -1,5 +1,5 @@
 import React from 'react';
-import { Diet, Busyness } from '../types';
+import { Diet, Busyness, ProfileType, Gender } from '../types';
 import { Loader2 } from 'lucide-react';
 
 interface ConfigFormProps {
@@ -13,6 +13,14 @@ interface ConfigFormProps {
   setDisliked: (v: string) => void;
   busyness: Busyness;
   setBusyness: (v: Busyness) => void;
+  profileType: ProfileType;
+  setProfileType: (v: ProfileType) => void;
+  age: number;
+  setAge: (v: number) => void;
+  college: string;
+  setCollege: (v: string) => void;
+  gender: Gender;
+  setGender: (v: Gender) => void;
   handleGenerate: (e: React.FormEvent) => void;
   loading: boolean;
   error: string | null;
@@ -21,6 +29,8 @@ interface ConfigFormProps {
 export function ConfigurationForm({
   people, setPeople, diet, setDiet, budget, setBudget,
   disliked, setDisliked, busyness, setBusyness,
+  profileType, setProfileType, age, setAge,
+  college, setCollege, gender, setGender,
   handleGenerate, loading, error
 }: ConfigFormProps) {
   return (
@@ -30,6 +40,51 @@ export function ConfigurationForm({
         <p className="text-sm text-secondary">Set your parameters to generate a custom plan.</p>
       </div>
       <form onSubmit={handleGenerate} className="flex flex-col gap-6">
+        
+        {/* Personal Details */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pb-6 border-b border-border-light">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-medium text-secondary uppercase tracking-wider">Profile</label>
+            <select 
+              value={profileType} onChange={e => setProfileType(e.target.value as ProfileType)}
+              className="w-full bg-bg border border-border-light rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-accent text-primary"
+            >
+              <option value="student">Student</option>
+              <option value="professional">Working Professional</option>
+            </select>
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-medium text-secondary uppercase tracking-wider">Age</label>
+            <input 
+              type="number" min="1" max="100"
+              value={age} onChange={e => setAge(Number(e.target.value))}
+              className="w-full bg-bg border border-border-light rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-accent text-primary"
+            />
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-medium text-secondary uppercase tracking-wider">Gender</label>
+            <select 
+              value={gender} onChange={e => setGender(e.target.value as Gender)}
+              className="w-full bg-bg border border-border-light rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-accent text-primary"
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-medium text-secondary uppercase tracking-wider">College/Workplace</label>
+            <input 
+              type="text" placeholder={profileType === 'student' ? "e.g. Stanford" : "e.g. Google"}
+              value={college} onChange={e => setCollege(e.target.value)}
+              className="w-full bg-bg border border-border-light rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-accent text-primary"
+            />
+          </div>
+        </div>
+
+        {/* Meal Preferences */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col gap-2">
             <label className="text-xs font-medium text-secondary uppercase tracking-wider">Number of People</label>

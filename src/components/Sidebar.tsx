@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChefHat, Calendar, ShoppingCart, Repeat, DollarSign, CheckSquare } from 'lucide-react';
+import { ChefHat, Calendar, ShoppingCart, Repeat, DollarSign, CheckSquare, Drumstick } from 'lucide-react';
 import { Tab } from '../types';
 
 interface SidebarProps {
@@ -11,6 +11,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const navItems: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: 'meal-plan', label: 'Meal Plan', icon: <Calendar size={18} /> },
     { id: 'grocery-list', label: 'Grocery List', icon: <ShoppingCart size={18} /> },
+    { id: 'protein', label: 'Protein Sources', icon: <Drumstick size={18} /> },
     { id: 'checklist', label: 'Checklist', icon: <CheckSquare size={18} /> },
     { id: 'substitutions', label: 'Substitutions', icon: <Repeat size={18} /> },
     { id: 'budget', label: 'Budget Check', icon: <DollarSign size={18} /> },

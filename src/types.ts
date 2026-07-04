@@ -1,6 +1,8 @@
-export type Tab = 'meal-plan' | 'grocery-list' | 'checklist' | 'substitutions' | 'budget';
+export type Tab = 'meal-plan' | 'grocery-list' | 'checklist' | 'substitutions' | 'budget' | 'protein';
 export type Diet = 'veg' | 'non-veg' | 'vegan';
 export type Busyness = 'relaxed' | 'normal' | 'very busy';
+export type ProfileType = 'student' | 'professional';
+export type Gender = 'male' | 'female';
 
 export interface Ingredient {
   name: string;
@@ -39,6 +41,12 @@ export interface BudgetInfo {
   suggestedSwap?: Substitution;
 }
 
+export interface ProteinSource {
+  meal: string;
+  source: string;
+  amount: string;
+}
+
 export interface MealPlanResult {
   meals: {
     breakfast: Recipe | null;
@@ -48,4 +56,5 @@ export interface MealPlanResult {
   groceryList: Record<string, GroceryItem[]>;
   substitutions: Substitution[];
   budget: BudgetInfo;
+  proteinSources: ProteinSource[];
 }

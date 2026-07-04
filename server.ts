@@ -18,7 +18,7 @@ async function startServer() {
       }
 
       const groq = new Groq({ apiKey: groqKey });
-      const { people, diet, budget, disliked, busyness } = req.body;
+      const { people, diet, budget, disliked, busyness, profileType, age, college, gender } = req.body;
 
       const systemPrompt = `You are a culinary AI assistant that generates meal plans and grocery lists.
 You must return a valid JSON object matching this schema exactly:
@@ -45,12 +45,17 @@ You must return a valid JSON object matching this schema exactly:
     "difference": 500, // absolute difference between budget and total cost
     // If over budget, provide ONE suggested swap to save money:
     "suggestedSwap": { "original": "...", "replacement": "...", "reason": "..." } 
-  }
+  },
+  "proteinSources": [
+    { "meal": "Breakfast", "source": "Eggs", "amount": "12g" },
+    { "meal": "Lunch", "source": "Chicken Breast", "amount": "30g" }
+  ]
 }
 
-Use Indian Rupees (₹) as the currency context for estimating budget costs.`;
+Use Indian Rupees (₹) as the currency context for estimating budget costs. Calculate protein amount properly based on typical nutritional data.`;
 
       const userPrompt = `Please generate a meal plan for:
+- Profile: ${profileType} (Age: ${age}, Gender: ${gender}${profileType === 'student' ? `, College: ${college}` : `, Workplace: ${college}`})
 - People: ${people}
 - Diet: ${diet}
 - Daily Budget: ₹${budget}

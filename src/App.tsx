@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Diet, Busyness, MealPlanResult, Tab } from './types';
+import { Diet, Busyness, MealPlanResult, Tab, ProfileType, Gender } from './types';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ConfigurationForm } from './components/ConfigurationForm';
@@ -8,6 +8,7 @@ import { GroceryList } from './components/GroceryList';
 import { ChecklistView } from './components/Checklist';
 import { SubstitutionsView } from './components/Substitutions';
 import { BudgetCheckView } from './components/BudgetCheck';
+import { ProteinSourcesView } from './components/ProteinSources';
 
 export default function App() {
   const [people, setPeople] = useState<number>(2);
@@ -15,6 +16,11 @@ export default function App() {
   const [budget, setBudget] = useState<number>(1000);
   const [disliked, setDisliked] = useState<string>('');
   const [busyness, setBusyness] = useState<Busyness>('normal');
+  const [profileType, setProfileType] = useState<ProfileType>('student');
+  const [age, setAge] = useState<number>(20);
+  const [college, setCollege] = useState<string>('');
+  const [gender, setGender] = useState<Gender>('male');
+  
   const [activeTab, setActiveTab] = useState<Tab>('meal-plan');
   const [result, setResult] = useState<MealPlanResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +41,11 @@ export default function App() {
           diet,
           budget,
           disliked,
-          busyness
+          busyness,
+          profileType,
+          age,
+          college,
+          gender
         })
       });
       if (!res.ok) {
@@ -67,6 +77,10 @@ export default function App() {
               budget={budget} setBudget={setBudget}
               disliked={disliked} setDisliked={setDisliked}
               busyness={busyness} setBusyness={setBusyness}
+              profileType={profileType} setProfileType={setProfileType}
+              age={age} setAge={setAge}
+              college={college} setCollege={setCollege}
+              gender={gender} setGender={setGender}
               handleGenerate={handleGenerate}
               loading={loading} error={error}
             />
@@ -78,6 +92,7 @@ export default function App() {
                 {activeTab === 'checklist' && <ChecklistView data={result} />}
                 {activeTab === 'substitutions' && <SubstitutionsView data={result} />}
                 {activeTab === 'budget' && <BudgetCheckView data={result} />}
+                {activeTab === 'protein' && <ProteinSourcesView data={result} />}
               </div>
             )}
           </div>
