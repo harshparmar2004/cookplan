@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Diet, Busyness, MealPlanResult, Tab, ProfileType, Gender } from './types';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -22,9 +22,18 @@ export default function App() {
   const [gender, setGender] = useState<Gender>('male');
   
   const [activeTab, setActiveTab] = useState<Tab>('meal-plan');
-  const [result, setResult] = useState<MealPlanResult | null>(null);
+  const [result, setResult] = useState<MealPlanResult | null>(() => {
+    const saved = localStorage.getItem('cookplan_result');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (result) {
+      localStorage.setItem('cookplan_result', JSON.stringify(result));
+    }
+  }, [result]);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
