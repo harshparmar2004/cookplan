@@ -9,6 +9,7 @@ import { ChecklistView } from './components/Checklist';
 import { SubstitutionsView } from './components/Substitutions';
 import { BudgetCheckView } from './components/BudgetCheck';
 import { ProteinSourcesView } from './components/ProteinSources';
+import { Download } from 'lucide-react';
 
 export default function App() {
   const [people, setPeople] = useState<number>(2);
@@ -71,6 +72,49 @@ export default function App() {
     }
   };
 
+  const handleExport = () => {
+    if (!result) return;
+    
+    let text = `🍳 CookPlan - Your Generated Meal Plan 🍳\n\n`;
+    text += `=== MEAL PLAN ===\n`;
+    const meals = [result.meals.breakfast, result.meals.lunch, result.meals.dinner].filter(Boolean);
+    meals.forEach(m => {
+      if (m) {
+        text += `\n[${m.type.toUpperCase()}] ${m.name}\n`;
+        text += `Prep Time: ${m.prepTime}\n`;
+        text += `Description: ${m.desc}\n`;
+        if (m.nutrition) {
+          text += `Nutrition: ${m.nutrition.calories} Cals | Protein: ${m.nutrition.protein} | Carbs: ${m.nutrition.carbs} | Fat: ${m.nutrition.fat}\n`;
+        }
+      }
+    });
+
+    text += `\n\n=== GROCERY LIST ===\n`;
+    Object.entries(result.groceryList).forEach(([category, items]) => {
+      if (items && items.length > 0) {
+        text += `\n-- ${category} --\n`;
+        items.forEach(item => {
+          text += `- ${item.name}: ${item.totalQty} ${item.unit}\n`;
+        });
+      }
+    });
+
+    text += `\n\n=== BUDGET ESTIMATE ===\n`;
+    text += `Estimated Cost: ₹${result.budget.totalCost}\n`;
+    text += `Budget Goal: ₹${result.budget.budget}\n`;
+    text += `Status: ${result.budget.isWithinBudget ? 'Within Budget ✅' : 'Over Budget ⚠️'}\n`;
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CookPlan_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex h-screen bg-bg text-primary font-sans antialiased">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -96,6 +140,13 @@ export default function App() {
 
             {result && (
               <div className="mt-8 transition-all">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-medium text-primary">Your Generated Plan</h2>
+                  <button onClick={handleExport} className="flex items-center gap-2 bg-primary text-bg px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+                    <Download size={16} />
+                    Export as Text
+                  </button>
+                </div>
                 {activeTab === 'meal-plan' && <MealPlanView data={result} />}
                 {activeTab === 'grocery-list' && <GroceryList data={result} />}
                 {activeTab === 'checklist' && <ChecklistView data={result} />}
